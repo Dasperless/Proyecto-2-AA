@@ -11,17 +11,20 @@ class interface(tk.Frame):
 		self.uploadImageWindow()
 
 	def windowSettings(self):
-		self.master.resizable(0,0)
 		self.master.title("Algoritmos genéticos")
+		self.master.geometry("725x500")
+		# self.master.resizable(0,0)
 		self.grid()
 
 	#Ventana con las opciones de subir una imagen
 	def uploadImageWindow(self):
-		tk.Label(self, text = "Sube una silueta de un árbola para iniciar el algoritmo").grid(row = 0,column=0,columnspan=3)
-		self.imageLabel = tk.Label(self)
-		self.imageLabel.grid(row=1,column=0)
-		tk.Button(self, text = "Subir imágen", command= lambda:self.uploadImage(), borderwidth=1, height=2, width=10).grid(row=2, column=0,columnspan=3)
-		tk.Button(self, text = "Iniciar", command= lambda:self.createTreeWindow(), borderwidth=1, height=2, width=10).grid(row=3, column=0,columnspan=3)
+		tk.Label(self, text = "Cargar una silueta", font=("Segoe UI",20)).grid(row = 0,column=1,sticky="NE")
+		defaultImg = tk.PhotoImage(file="Img.gif")
+		self.master.photo = defaultImg		
+		self.imageLabel = tk.Label(self, image = defaultImg)
+		self.imageLabel.grid(row=0,column=0,sticky="N")
+		tk.Button(self, text = "Subir imágen", font=("Segoe UI",10), command= lambda:self.uploadImage(), borderwidth=1, height=2, width=10).grid(row=0, column=1, sticky="SW")
+		tk.Button(self, text = "Iniciar", font=("Segoe UI",10), command= lambda:self.createTreeWindow(), borderwidth=1, height=2, width=10).grid(row=0, column=1, sticky="SE")
 
 	#Esta funcion sube una imagen y actualiza el label que la contiene
 	def uploadImage(self):
@@ -30,7 +33,6 @@ class interface(tk.Frame):
 		photo = tk.PhotoImage(file=imagePath)
 		self.master.photo = photo
 		self.imageLabel.config(image=photo)
-		self.imageLabel.grid(row=1,column=0)
 		print(imagePath)
 
 	#Función que abre la interfaz para crear el arbol

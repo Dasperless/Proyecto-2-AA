@@ -1,15 +1,30 @@
-import pygame
+import PIL
+import pygame 
 import math
+import random as r
+from PIL import Image
 
 class fractalTree:
 	def __init__(self):
-		self.windowSettings()
+		# self.windowSettings()
+		self.SilhouetteMatrix = []
 
 	def windowSettings(self):
 		pygame.init()
 		self.window = pygame.display.set_mode((600, 600))
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
+
+	def getDataFromSilhouette(self, path):	
+		img = Image.open(path)
+		rgbImage = img.convert("RGB")
+		for i in range(1000):
+			x = r.randint(0,499)
+			y = r.randint(0,499)
+			print(x,y)
+			if(rgbImage.getpixel((x,y)) != (255,255,255)):
+				self.SilhouetteMatrix.append([x,y])
+		print(self.SilhouetteMatrix)
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
 		if depth > 0:
@@ -31,6 +46,3 @@ class fractalTree:
 	def input(self, event):
 		if event.type == pygame.QUIT:
 			quit()
-
-
-

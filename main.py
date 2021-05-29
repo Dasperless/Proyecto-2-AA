@@ -23,16 +23,18 @@ class interface(tk.Frame):
 		self.master.photo = defaultImg		
 		self.imageLabel = tk.Label(self, image = defaultImg)
 		self.imageLabel.grid(row=0,column=0,sticky="N")
-		tk.Button(self, text = "Subir imágen", font=("Segoe UI",10), command= lambda:self.uploadImage(), borderwidth=1, height=2, width=10).grid(row=0, column=1, sticky="SW")
-		tk.Button(self, text = "Iniciar", font=("Segoe UI",10), command= lambda:self.createTreeWindow(), borderwidth=1, height=2, width=10).grid(row=0, column=1, sticky="SE")
+		tk.Button(self, text = "Subir imágen", font=("Segoe UI",10), command= lambda:self.uploadImage(), borderwidth=1, height=2, width=13).grid(row=0, column=1, sticky="SW")
+		tk.Button(self, text = "Iniciar", font=("Segoe UI",10), command= lambda:self.createTreeWindow(), borderwidth=1, height=2, width=13).grid(row=0, column=1, sticky="SE")
 
 	#Esta funcion sube una imagen y actualiza el label que la contiene
 	def uploadImage(self):
 		pickedfiletypes = (('png files', '*.png'), ('gif files', '*.gif'))
 		imagePath = fd.askopenfilename(parent=self,title= "Selecciona una silueta",   filetypes= pickedfiletypes)
-		photo = tk.PhotoImage(file=imagePath)
-		self.master.photo = photo
-		self.imageLabel.config(image=photo)
+		#Si no se seleccionó una imagen evita que se modifique
+		if(imagePath != ""):
+			photo = tk.PhotoImage(file=imagePath)
+			self.master.photo = photo
+			self.imageLabel.config(image=photo)
 		print(imagePath)
 
 	#Función que abre la interfaz para crear el arbol

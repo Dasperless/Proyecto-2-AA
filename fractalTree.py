@@ -18,11 +18,12 @@ class fractalTree:
 		img = Image.open(path)
 		rgbImage = img.convert("RGB")
 		for i in range(1000):
-			x = r.randint(0,499)
-			y = r.randint(0,499)
-			if(rgbImage.getpixel((x,y)) != (255,255,255)):
+			x = r.randint(0,599)
+			y = r.randint(0,599)
+			if(rgbImage.getpixel((x,y)) != (255,255,255) and [x,y] not in self.SilhouetteMatrix):
 				self.SilhouetteMatrix.append([x,y])
-		print(self.SilhouetteMatrix)
+		sortedMatrix = sorted(self.SilhouetteMatrix, key=lambda k:[k[1],k[0]])
+		return sortedMatrix
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
 		if depth > 0:
@@ -45,6 +46,7 @@ class fractalTree:
 	def input(self, event):
 		if event.type == pygame.QUIT:
 			quit()
-# a = fractalTree()
+a = fractalTree()
+m = a.getDataFromSilhouette("silueta.gif")
 #tener cuidado con la profundidad con rangos mayores a 25 se traba
 # a.showTree(300, 600, -90, 20,20, 7, 1, 2, 0)

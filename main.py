@@ -12,7 +12,7 @@ class interface(tk.Frame):
 
 	def windowSettings(self):
 		self.master.title("Algoritmos genéticos")
-		self.master.geometry("725x500")
+		self.master.geometry("825x605")
 		self.master.resizable(0,0)
 		self.grid()
 

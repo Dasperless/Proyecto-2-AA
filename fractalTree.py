@@ -6,7 +6,6 @@ from PIL import Image
 
 class fractalTree:
 	def __init__(self):
-		# self.windowSettings()
 		self.SilhouetteMatrix = []
 
 	def windowSettings(self):
@@ -21,7 +20,6 @@ class fractalTree:
 		for i in range(1000):
 			x = r.randint(0,499)
 			y = r.randint(0,499)
-			print(x,y)
 			if(rgbImage.getpixel((x,y)) != (255,255,255)):
 				self.SilhouetteMatrix.append([x,y])
 		print(self.SilhouetteMatrix)
@@ -37,7 +35,8 @@ class fractalTree:
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
                             lenDec, lenDec, baseDiam-diamDec, diamDec)
 
-	def createTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
+	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
+		self.windowSettings()
 		self.drawTree(x1, y1, angle, forkAngle, depth, baseLen,lenDec, baseDiam, diamDec)
 		pygame.display.flip()
 		while True:
@@ -46,3 +45,6 @@ class fractalTree:
 	def input(self, event):
 		if event.type == pygame.QUIT:
 			quit()
+# a = fractalTree()
+#tener cuidado con la profundidad con rangos mayores a 25 se traba
+# a.showTree(300, 600, -90, 20,20, 7, 1, 2, 0)

@@ -8,7 +8,9 @@ from PIL import Image
 class fractalTree:
 	def __init__(self):
 		self.SilhouetteMatrix = []
+		self.FractalCoords = []
 		self.FractalMatrix = []
+		self.InitialParameters = []
 		self.screen = None
 
 	def windowSettings(self):
@@ -19,11 +21,11 @@ class fractalTree:
 
 	def getScore(self, silhouetteArr, fractalArr):
 		fractalNpArr = np.array(fractalArr)
-		notEqual = 0
+		score  = 0
 		for i in range(len(fractalNpArr)):
-			if(silhouetteArr[i] not in fractalNpArr):
-				notEqual += 1
-		return notEqual/len(silhouetteArr)
+			if(silhouetteArr[i] in fractalNpArr):
+				score += 1
+		return score/len(silhouetteArr)*100
 
 	def getDataFromSilhouette(self, path):
 		img = Image.open(path)
@@ -35,7 +37,11 @@ class fractalTree:
 		return self.SilhouetteMatrix
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		self.FractalMatrix.append([x1, y1])
+		self.FractalCoords.append([x1, y1])
+		if(lenDec >= baseLen):
+			lenDec = 0
+		elif(diamDec >= baseDiam):
+			diamDec = 0
 		if depth > 0:
 			x2 = x1 + int(math.cos(math.radians(angle)) * depth * baseLen)
 			y2 = y1 + int(math.sin(math.radians(angle)) * depth * baseLen)
@@ -46,6 +52,29 @@ class fractalTree:
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
+		return self.FractalCoords
+
+	def test (self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
+		# for i in range(1):
+		# 	rAngle = r.randint(80,angle*-1)*-1
+		# 	rforkAng = r.randint(0,forkAng)
+		# 	rDepth = r.randint(4,20)
+		# 	rBaseLen = r.randint(4,baseLen)
+		# 	rLenDec =  r.randint(0,lenDec)
+		# 	rBaseDiam = r.randint(1,baseDiam)
+		# 	rDiamDec = r.randint(0,diamDec)
+		# 	self.InitialParameters.append([x1,y1,rAngle,rforkAng,rDepth,rBaseLen,rLenDec,rBaseDiam,rDiamDec])
+		# 	self.FractalMatrix.append(self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec))
+		# 	self.FractalCoords = []
+
+		self.FractalMatrix.append(self.drawTree(x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec))
+		# print(len( self.FractalMatrix[0]), len(self.SilhouetteMatrix))
+		print(self.getScore(m, self.FractalMatrix[0]))
+		# a = self.InitialParameters[0]
+		# print(a)
+		# self.showTree(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8])
+		# print(len(self.FractalMatrix))
+
 
 	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
 		self.windowSettings()
@@ -62,5 +91,6 @@ class fractalTree:
 
 a = fractalTree()
 m = a.getDataFromSilhouette("silueta.gif")
-a.drawTree(300, 599, -90, 10, 9, 10, 1, 2, 0)
-print(a.getScore(m, a.FractalMatrix))
+a.test(300, 599, -90, 13, 15, 9, 1, 6, 1)
+# a.test(300, 599, -90, 13, 15, 2, 1, 6, 0)
+

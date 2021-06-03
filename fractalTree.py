@@ -1,11 +1,9 @@
+from numpy_indexed.utility import axis_as_object
 import pygame
 import math
 import random as r
 import numpy as np
 from PIL import Image
-import numpy_indexed as npi
-
-
 class fractalTree:
 	def __init__(self):
 		self.SilhouetteMatrix = []
@@ -21,18 +19,10 @@ class fractalTree:
 		self.screen = pygame.display.get_surface()
 
 	def getScore(self, silhouetteArr, fractalArr):
-		fractalNpArr = np.array(fractalArr)
-		score = len(npi.intersection(fractalNpArr,silhouetteArr))
+		a = set(map(tuple,silhouetteArr))
+		b = set(map(tuple,fractalArr))
+		score = len(a.intersection(b))
 		return score/len(fractalArr)*100
-
-	def getScore1(self, silhouetteArr, fractalArr):
-		fractalNpArr = np.array(fractalArr)
-		score  = 0
-		for i in range(len(fractalNpArr)):
-			if(fractalNpArr[i] in silhouetteArr):
-				score += 1
-		print(score)
-		return score/len(silhouetteArr)*100	
 
 	def getDataFromSilhouette(self, path):
 		img = Image.open(path)
@@ -44,7 +34,8 @@ class fractalTree:
 		return self.SilhouetteMatrix
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		self.FractalCoords.append([x1, y1])
+		if([x1,y1] not in self.FractalCoords):
+			self.FractalCoords.append([x1, y1])
 		if(lenDec >= baseLen):
 			lenDec = 0
 		elif(diamDec >= baseDiam):
@@ -72,10 +63,9 @@ class fractalTree:
 		# 	rDiamDec = r.randint(0,diamDec)
 		# 	self.InitialParameters.append([x1,y1,rAngle,rforkAng,rDepth,rBaseLen,rLenDec,rBaseDiam,rDiamDec])
 		# 	self.FractalMatrix.append(self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec))
-		# 	self.FractalCoords = []
-
-		self.FractalMatrix.append(self.drawTree(
-			x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec))
+		fractalCoords = self.drawTree(x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec)
+		self.FractalMatrix.append(fractalCoords)
+		self.FractalCoords = []
 		# print(len( self.FractalMatrix[0]), len(self.SilhouetteMatrix))
 		# print(self.getScore(m, self.FractalMatrix[0]))
 		# a = self.InitialParameters[0]
@@ -98,10 +88,9 @@ class fractalTree:
 
 f = fractalTree()
 m = f.getDataFromSilhouette("silueta.gif")
-# f.showTree(300, 599, -90, 13, 15, 2, 1, 6, 0)
 f.test(300, 599, -90, 13, 15, 9, 1, 6, 1)
-# print(f.FractalMatrix)
 
 
 print(f.getScore(f.SilhouetteMatrix,f.FractalMatrix[0]))
 # print(f.getScore1(f.SilhouetteMatrix,f.FractalMatrix[0]))
+# print(f.SilhouetteMatrix)

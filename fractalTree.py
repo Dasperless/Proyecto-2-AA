@@ -1,3 +1,4 @@
+from warnings import simplefilter
 from numpy_indexed.utility import axis_as_object
 import pygame
 import math
@@ -8,7 +9,8 @@ class fractalTree:
 	def __init__(self):
 		self.SilhouetteMatrix = []
 		self.FractalCoords = []
-		self.FractalMatrix = []
+		self.FractalDict = {}
+		self.topArboles = {}
 		self.InitialParameters = []
 		self.screen = None
 
@@ -18,11 +20,33 @@ class fractalTree:
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
 
+	def Cruces(self):
+		parejas = self.Seleccion()
+
+		for pair in parejas:
+			cromosomas1 = self.topArboles[pair[0]]['Parametros']
+			cromosomas2 = self.topArboles[pair[1]]['Parametros']
+			
+
+	def Seleccion(self):
+		notas = []
+		arboles = []
+		parejas = []
+
+		for arbol in self.topArboles:
+			arboles.append(arbol)
+			notas.append(self.topArboles[arbol]['Nota'])
+		seleccionados = r.choices(arboles,cum_weights= notas,k=10)
+		
+		for i in range(0,len(seleccionados),2):	
+			parejas.append([seleccionados[i],seleccionados[i+1]])
+		return parejas
+
 	def getScore(self, silhouetteArr, fractalArr):
 		a = set(map(tuple,silhouetteArr))
 		b = set(map(tuple,fractalArr))
 		score = len(a.intersection(b))
-		return score/len(fractalArr)*100
+		return score/len(silhouetteArr)*100
 
 	def getDataFromSilhouette(self, path):
 		img = Image.open(path)
@@ -52,26 +76,23 @@ class fractalTree:
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 		return self.FractalCoords
 
-	def test(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		# for i in range(1):
-		# 	rAngle = r.randint(80,angle*-1)*-1
-		# 	rforkAng = r.randint(0,forkAng)
-		# 	rDepth = r.randint(4,20)
-		# 	rBaseLen = r.randint(4,baseLen)
-		# 	rLenDec =  r.randint(0,lenDec)
-		# 	rBaseDiam = r.randint(1,baseDiam)
-		# 	rDiamDec = r.randint(0,diamDec)
-		# 	self.InitialParameters.append([x1,y1,rAngle,rforkAng,rDepth,rBaseLen,rLenDec,rBaseDiam,rDiamDec])
-		# 	self.FractalMatrix.append(self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec))
-		fractalCoords = self.drawTree(x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec)
-		self.FractalMatrix.append(fractalCoords)
-		self.FractalCoords = []
-		# print(len( self.FractalMatrix[0]), len(self.SilhouetteMatrix))
-		# print(self.getScore(m, self.FractalMatrix[0]))
-		# a = self.InitialParameters[0]
-		# print(a)
-		# self.showTree(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8])
-		# print(len(self.FractalMatrix))
+	def PoblacionInicial(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
+		for i in range(10):
+			rAngle = r.randint(80,angle*-1)*-1
+			rforkAng = r.randint(0,forkAng)
+			rDepth = r.randint(4,depth)
+			rBaseLen = r.randint(4,baseLen)
+			rLenDec =  r.randint(0,lenDec)
+			rBaseDiam = r.randint(1,baseDiam)
+			rDiamDec = r.randint(0,diamDec)
+			parametros  = [rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec]
+			coordenadas = self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec)
+			nota = self.getScore(self.SilhouetteMatrix,coordenadas)
+			arbolDict = {'Coordenadas': coordenadas, 'Parametros':parametros, 'Nota': nota, 'Padres' : None, 'NotaNormalizada' : 0}
+			self.FractalDict[i] = arbolDict
+			self.FractalCoords = []
+		self.topArboles = self.FractalDict
+		self.Cruces()
 
 	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
 		self.windowSettings()
@@ -85,12 +106,7 @@ class fractalTree:
 		if event.type == pygame.QUIT:
 			quit()
 
-
 f = fractalTree()
 m = f.getDataFromSilhouette("silueta.gif")
-f.test(300, 599, -90, 13, 15, 9, 1, 6, 1)
+f.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
 
-
-print(f.getScore(f.SilhouetteMatrix,f.FractalMatrix[0]))
-# print(f.getScore1(f.SilhouetteMatrix,f.FractalMatrix[0]))
-# print(f.SilhouetteMatrix)

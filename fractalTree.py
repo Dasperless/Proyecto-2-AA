@@ -20,13 +20,40 @@ class fractalTree:
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
 
+	def convertirParamABin(self,cromosomas1,cromosomas2):
+		bin1 = ""
+		bin2 = ""
+		for i in range(len(cromosomas1)):
+				bin1+=bin(cromosomas1[i])[1:]
+				bin2+=bin(cromosomas2[i])[1:]
+
+		return bin1,bin2
+
+	def swapBits(self,bin1,bin2):
+		rand = r.randint(0,len(bin1))
+		print(rand)
+		print(bin1," ",bin2)
+		aux1 = bin1[:rand]
+		aux2 = bin2[:rand]
+
+		mitad1 = bin1[rand:]
+		mitad2 = bin2[rand:]
+
+		aux1+=mitad2
+		aux2+=mitad1
+		print(aux1," ",aux2)
+		return [aux1,aux2]
+
+
 	def Cruces(self):
 		parejas = self.Seleccion()
 
 		for pair in parejas:
 			cromosomas1 = self.topArboles[pair[0]]['Parametros']
 			cromosomas2 = self.topArboles[pair[1]]['Parametros']
-			
+
+			bin1,bin2 = self.convertirParamABin(cromosomas1,cromosomas2)
+			bin1,bin2 = self.swapBits(bin1,bin2)
 
 	def Seleccion(self):
 		notas = []
@@ -36,7 +63,7 @@ class fractalTree:
 		for arbol in self.topArboles:
 			arboles.append(arbol)
 			notas.append(self.topArboles[arbol]['Nota'])
-		seleccionados = r.choices(arboles,cum_weights= notas,k=10)
+		seleccionados = r.choices(arboles,cum_weights= notas,k=len(self.topArboles))
 		
 		for i in range(0,len(seleccionados),2):	
 			parejas.append([seleccionados[i],seleccionados[i+1]])
@@ -77,7 +104,7 @@ class fractalTree:
 		return self.FractalCoords
 
 	def PoblacionInicial(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		for i in range(10):
+		for i in range(2):
 			rAngle = r.randint(80,angle*-1)*-1
 			rforkAng = r.randint(0,forkAng)
 			rDepth = r.randint(4,depth)

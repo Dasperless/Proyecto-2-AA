@@ -100,11 +100,11 @@ class fractalTree:
             quit()
 
 
-f = fractalTree()
-m = f.getDataFromSilhouette("silueta.gif")
-f.test(300, 599, -90, 13, 15, 9, 1, 6, 1)
+# f = fractalTree()
+# m = f.getDataFromSilhouette("silueta.gif")
+# f.test(300, 599, -90, 13, 15, 9, 1, 6, 1)
 
 
-print(f.getScore(f.SilhouetteMatrix,f.FractalMatrix[0]))
-# print(f.getScore1(f.SilhouetteMatrix,f.FractalMatrix[0]))
-# print(f.SilhouetteMatrix)
+# print(f.getScore(f.SilhouetteMatrix,f.FractalMatrix[0]))
+# # print(f.getScore1(f.SilhouetteMatrix,f.FractalMatrix[0]))
+# # print(f.SilhouetteMatrix)

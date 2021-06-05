@@ -16,18 +16,18 @@ class App(tk.Tk):
 		container.grid_columnconfigure(0, weight=1)
 
 		self.frames = {}
-		for F in (StartPage, PageOne, UploadPage):
+		for F, geometry in zip((StartPage, PageOne, UploadPage), ('300x300', '500x500', '825x605')):
 			page_name = F.__name__
 			frame = F(parent=container, controller=self)
-			self.frames[page_name] = frame
-
-			
+			self.frames[page_name] = (frame,geometry)
 			frame.grid(row=0, column=0, sticky="nsew")
 
 		self.showFrame("UploadPage")
 		
 	def showFrame(self, page_name):
-		frame = self.frames[page_name]
+		frame, geometry = self.frames[page_name]
+		self.update_idletasks()
+		self.geometry(geometry)
 		frame.tkraise()
 
 
@@ -52,7 +52,7 @@ class PageOne(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
-		self.controller.resizable(True, True)z
+		self.controller.resizable(True, True)
 		label = tk.Label(self, text="This is page 1", font=controller.title_font)
 		label.pack(side="top", fill="x", pady=10)
 		button = tk.Button(self, text="Go to the start page",
@@ -65,12 +65,11 @@ class UploadPage(tk.Frame):
 		tk.Frame.__init__(self,parent)
 		self.controller = controller
 		self.fractal = fractalTree()  # Clase con el arbol fractal
-		self.windowSettings()
+		# self.windowSettings()
 		self.uploadImageWindow()
 
 	def windowSettings(self):
 		self.controller.title("Algoritmos genéticos")
-		self.controller.geometry("825x605")
 		self.controller.resizable(0, 0)
 		self.grid()
 

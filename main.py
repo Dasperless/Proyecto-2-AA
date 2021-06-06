@@ -1,7 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog as fd
-from tkinter import font as tkfont 
-import tkinter.scrolledtext as st
+from tkinter import Listbox, font as tkfont 
 from fractalTree import fractalTree
 import tkinter.messagebox as mb
 
@@ -43,9 +42,18 @@ class DashboardPage(tk.Frame):
 		self.controller = controller
 
 		#Scroll
-		labelScroll = tk.LabelFrame(self, text= "Árboles")
-		labelScroll.grid(row = 0, column = 0, sticky="ENS", rowspan= 45)
-		st.ScrolledText(labelScroll, height=43, width=40).grid(row = 0, column = 0, sticky="E")
+		labelScrollListBox = tk.LabelFrame(self, text= "Árboles")
+		labelScrollListBox.grid(row = 0, column = 0, sticky="ENS", rowspan= 45)
+		listbox = tk.Listbox(labelScrollListBox, height=43, width=40)
+		listbox.pack(side = "left", fill = "both")
+		
+		scrollbar = tk.Scrollbar(labelScrollListBox)
+		scrollbar.pack(side = "right", fill = "both")
+		for values in range(100):
+			listbox.insert("end", values)
+
+		listbox.config(yscrollcommand=scrollbar.set)
+		scrollbar.config(command=listbox.yview)
 
 		#Cromosomas
 		labelFrameChromosomes = tk.LabelFrame(self, text= "Cromosomas")

@@ -1,81 +1,70 @@
 import tkinter as tk
 import tkinter.filedialog as fd
-from tkinter import font as tkfont  # python 3
-from typing import Container
+from tkinter import font as tkfont 
+import tkinter.scrolledtext as st
 from fractalTree import fractalTree
 import tkinter.messagebox as mb
 
 
 class App(tk.Tk):
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs):		
 		tk.Tk.__init__(self, *args, **kwargs)
 		self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
+		self.title("Algoritmos genéticos")
+		self.resizable(0, 0)		
+		self.imagePath = "" 	#path de la imagen que se subirá
+
+		self.geneticApp = fractalTree()  # Clase con el arbol fractal
 		container = tk.Frame(self)
 		container.pack(side="top", fill="both", expand=True)
 		container.grid_rowconfigure(0, weight=1)
 		container.grid_columnconfigure(0, weight=1)
 
 		self.frames = {}
-		for F, geometry in zip((StartPage, PageOne, UploadPage), ('300x300', '500x500', '825x605')):
+		for F, geometry in zip((DashboardPage, UploadPage), ('1240x720','825x605')):
 			page_name = F.__name__
 			frame = F(parent=container, controller=self)
+			#almacena el frame y la geometria para este frame
 			self.frames[page_name] = (frame,geometry)
 			frame.grid(row=0, column=0, sticky="nsew")
 
 		self.showFrame("UploadPage")
 		
 	def showFrame(self, page_name):
+		'''Muestra un frame por el nombre de la página'''
 		frame, geometry = self.frames[page_name]
 		self.update_idletasks()
 		self.geometry(geometry)
 		frame.tkraise()
 
-
-class StartPage(tk.Frame):
-
+class DashboardPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
-		label = tk.Label(self, text="This is the start page", font=controller.title_font)
-		label.pack(side="top", fill="x", pady=10)
 
-		button1 = tk.Button(self, text="Go to Page One",
-							command=lambda: controller.showFrame("PageOne"))
-		button2 = tk.Button(self, text="Go to Page Two",
-							command=lambda: controller.showFrame("UploadPage"))
-		button1.pack()
-		button2.pack()
+		#Scroll
+		labelScroll = tk.LabelFrame(self, text= "Árboles")
+		labelScroll.grid(row = 0, column = 0, sticky="ENS", rowspan= 45)
+		st.ScrolledText(labelScroll, height=43, width=40).grid(row = 0, column = 0, sticky="E")
 
+		#Cromosomas
+		labelFrameChromosomes = tk.LabelFrame(self, text= "Cromosomas")
+		labelFrameChromosomes.grid(row = 0, column = 1, sticky="N")
 
-class PageOne(tk.Frame):
-
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, parent)
-		self.controller = controller
-		self.controller.resizable(True, True)
-		label = tk.Label(self, text="This is page 1", font=controller.title_font)
-		label.pack(side="top", fill="x", pady=10)
-		button = tk.Button(self, text="Go to the start page",
-						   command=lambda: controller.showFrame("StartPage"))
-		button.pack()
-
-
+		labelParent1 = tk.Label(labelFrameChromosomes, text = "Cromosomas padre 1", anchor='w', width=126)
+		labelParent1.grid(row = 0, column = 0)
+		labelParent2 = tk.Label(labelFrameChromosomes, text = "Cromosomas padre 2", anchor='w', width=126)
+		labelParent2.grid(row = 1, column = 0)
+		labelChromosomes = tk.Label(labelFrameChromosomes, text = "Cromosomas",anchor='w', width=126)
+		labelChromosomes.grid(row = 2, column = 0)
 class UploadPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self,parent)
 		self.controller = controller
-		self.fractal = fractalTree()  # Clase con el arbol fractal
-		# self.windowSettings()
 		self.uploadImageWindow()
-
-	def windowSettings(self):
-		self.controller.title("Algoritmos genéticos")
-		self.controller.resizable(0, 0)
-		self.grid()
 
 	# Ventana con las opciones de subir una imagen
 	def uploadImageWindow(self):
-		self.imagePath = "" 	#path de la imagen que se subirá
 		tk.Label(self, text="Cargar una silueta", font=(
 			"Segoe UI", 20)).grid(row=0, column=1, sticky="NE")
 		defaultImg = tk.PhotoImage(file="Img.gif")			# imagen por defecto
@@ -86,30 +75,29 @@ class UploadPage(tk.Frame):
 		tk.Button(self, text="Subir imágen", font=("Segoe UI", 10), command=lambda: self.uploadImage(
 		), borderwidth=1, height=2, width=13).grid(row=0, column=1, sticky="SW")
 		# boton de iniciar
-		tk.Button(self, text="Iniciar", font=("Segoe UI", 10), command=lambda: self.createTreeWindow(
+		tk.Button(self, text="Iniciar", font=("Segoe UI", 10), command=lambda: self.checkImg(
 		), borderwidth=1, height=2, width=13).grid(row=0, column=1, sticky="SE")
 
 	# Esta funcion sube una imagen y actualiza el label que la contiene
 	def uploadImage(self):
-		pickedfiletypes = (('png files', '*.png'), ('gif files', '*.gif'))
-		self.imagePath = fd.askopenfilename(
+		pickedfiletypes = (('gif files', '*.gif'), ('png files', '*.png'))
+		self.controller.imagePath = fd.askopenfilename(
 			parent=self, title="Selecciona una silueta",   filetypes=pickedfiletypes)
 		# Si no se seleccionó una imagen evita que se modifique
-		if(self.imagePath != ""):
-			if(self.fractal.checkImgResolution(self.imagePath)):
-				photo = tk.PhotoImage(file=self.imagePath)
+		if(self.controller.imagePath != ""):
+			if(self.controller.geneticApp.checkImgResolution(self.controller.imagePath)):
+				photo = tk.PhotoImage(file=self.controller.imagePath)
 				self.master.photo = photo
 				self.imageLabel.config(image=photo)
 			else:
 				mb.showinfo(
 					"Resolución", "La resolución de la imagen debe ser 600x600")
-				self.imagePath = ""				# Elimino el path de la imagen con resolución incorrecta.
+				self.controller.imagePath = ""				# Elimino el path de la imagen con resolución incorrecta.
 
 	# Función que abre la interfaz para crear el arbol
-	def createTreeWindow(self):
-		if(self.imagePath != ""):
-			self.fractal.geneticAlgorithm(self.imagePath)
-			self.controller.showFrame("StartPage")
+	def checkImg(self):
+		if(self.controller.imagePath != ""):
+			self.controller.showFrame("DashboardPage")
 		else:
 			mb.showinfo("Imagen", "No se ha cargado una silueta")
 

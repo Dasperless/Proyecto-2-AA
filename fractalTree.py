@@ -24,10 +24,14 @@ class fractalTree:
 		bin1 = ""
 		bin2 = ""
 		for i in range(len(cromosomas1)):
-				bin1+=bin(cromosomas1[i])[1:]
-				bin2+=bin(cromosomas2[i])[1:]
-
-		return bin1,bin2
+			if(i == 0):
+				bin1+=bin(cromosomas1[i])[3:]
+				bin2+=bin(cromosomas2[i])[3:]
+			else:
+				bin1+=bin(cromosomas1[i])[2:] 
+				bin2+=bin(cromosomas2[i])[2:]
+			
+		return [bin1,bin2]
 
 	def swapBits(self,bin1,bin2):
 		rand = r.randint(0,len(bin1))
@@ -49,11 +53,12 @@ class fractalTree:
 		parejas = self.Seleccion()
 
 		for pair in parejas:
+			print(pair)
 			cromosomas1 = self.topArboles[pair[0]]['Parametros']
 			cromosomas2 = self.topArboles[pair[1]]['Parametros']
 
-			bin1,bin2 = self.convertirParamABin(cromosomas1,cromosomas2)
-			bin1,bin2 = self.swapBits(bin1,bin2)
+			binarios = self.convertirParamABin(cromosomas1,cromosomas2)
+			binarios = self.swapBits(binarios[0],binarios[1])
 
 	def Seleccion(self):
 		notas = []
@@ -115,7 +120,7 @@ class fractalTree:
 			parametros  = [rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec]
 			coordenadas = self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec)
 			nota = self.getScore(self.SilhouetteMatrix,coordenadas)
-			arbolDict = {'Coordenadas': coordenadas, 'Parametros':parametros, 'Nota': nota, 'Padres' : None, 'NotaNormalizada' : 0}
+			arbolDict = {'Coordenadas': coordenadas, 'Parametros':parametros, 'Nota': nota, 'Padres' : None}
 			self.FractalDict[i] = arbolDict
 			self.FractalCoords = []
 		self.topArboles = self.FractalDict

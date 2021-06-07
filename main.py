@@ -14,15 +14,17 @@ class App(tk.Tk):
 		self.imagePath = "" 	#path de la imagen que se subirá
 
 		self.geneticApp = fractalTree()  # Clase con el arbol fractal
-		container = tk.Frame(self)
-		container.pack(side="top", fill="both", expand=True)
-		container.grid_rowconfigure(0, weight=1)
-		container.grid_columnconfigure(0, weight=1)
+		self.container = tk.Frame(self)
+		self.container.pack(side="top", fill="both", expand=True)
+		self.container.grid_rowconfigure(0, weight=1)
+		self.container.grid_columnconfigure(0, weight=1)
 
 		self.frames = {}
+		self.pages = []
 		for F, geometry in zip((DashboardPage, UploadPage), ('1240x720','825x605')):
 			page_name = F.__name__
-			frame = F(parent=container, controller=self)
+			frame = F(parent=self.container, controller=self)
+			self.pages.append(frame)
 			#almacena el frame y la geometria para este frame
 			self.frames[page_name] = (frame,geometry)
 			frame.grid(row=0, column=0, sticky="nsew")
@@ -44,16 +46,14 @@ class DashboardPage(tk.Frame):
 		#Scroll
 		labelScrollListBox = tk.LabelFrame(self, text= "Árboles")
 		labelScrollListBox.grid(row = 0, column = 0, sticky="ENS", rowspan= 45)
-		listbox = tk.Listbox(labelScrollListBox, height=43, width=40)
-		listbox.pack(side = "left", fill = "both")
+		self.listbox = tk.Listbox(labelScrollListBox, height=43, width=40)
+		self.listbox.pack(side = "left", fill = "both")
 		
 		scrollbar = tk.Scrollbar(labelScrollListBox)
 		scrollbar.pack(side = "right", fill = "both")
-		for values in range(100):
-			listbox.insert("end", values)
 
-		listbox.config(yscrollcommand=scrollbar.set)
-		scrollbar.config(command=listbox.yview)
+		self.listbox.config(yscrollcommand=scrollbar.set)
+		scrollbar.config(command=self.listbox.yview)
 
 		#Cromosomas
 		labelFrameChromosomes = tk.LabelFrame(self, text= "Cromosomas")
@@ -65,10 +65,23 @@ class DashboardPage(tk.Frame):
 		labelParent2.grid(row = 1, column = 0)
 		labelChromosomes = tk.Label(labelFrameChromosomes, text = "Cromosomas",anchor='w', width=126)
 		labelChromosomes.grid(row = 2, column = 0)
+
+		#carga los datos del algoritmo genético
+	def loadData(self):
+		image=self.controller.imagePath
+		self.controller.geneticApp.algoritmoGenetico(image)
+		treeList = self.controller.geneticApp.FractalDict	
+		self.updateListBox(self.listbox, treeList)		
+
+	def updateListBox(self, listbox, list):
+		for key in list:
+			listbox.insert("end", "Árbol "  + str(key))
+		
 class UploadPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self,parent)
 		self.controller = controller
+		self.isClicked= False
 		self.uploadImageWindow()
 
 	# Ventana con las opciones de subir una imagen
@@ -106,6 +119,10 @@ class UploadPage(tk.Frame):
 	def checkImg(self):
 		if(self.controller.imagePath != ""):
 			self.controller.showFrame("DashboardPage")
+			if(not self.isClicked):
+				self.controller.pages[0].loadData()
+				self.isClicked = True
+			
 		else:
 			mb.showinfo("Imagen", "No se ha cargado una silueta")
 

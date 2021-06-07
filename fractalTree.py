@@ -129,7 +129,7 @@ class fractalTree:
 		self.topArboles = self.FractalDict
 		self.Cruces()
 
-	def AlgoritmoGenetico(self, imagePath):
+	def algoritmoGenetico(self, imagePath):
 		self.getDataFromSilhouette(imagePath)
 		self.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
 
@@ -147,6 +147,7 @@ class fractalTree:
 			quit()
 
 # f = fractalTree()
-# m = 
+# f.algoritmoGenetico("silueta.gif")
+# m = f.
 # f.
 

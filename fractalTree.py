@@ -12,6 +12,8 @@ class fractalTree:
 		self.FractalDict = {}
 		self.topArboles = {}
 		self.InitialParameters = []
+		self.cromosomas1Len =[]
+		self.cromosomas2Len = []
 		self.screen = None
 
 	def windowSettings(self):
@@ -24,19 +26,22 @@ class fractalTree:
 		bin1 = ""
 		bin2 = ""
 		for i in range(len(cromosomas1)):
+			
 			if(i == 0):
 				bin1+=bin(cromosomas1[i])[3:]
 				bin2+=bin(cromosomas2[i])[3:]
+				self.cromosomas1Len.append(len(bin(cromosomas1[i])[3:]))
+				self.cromosomas2Len.append(len(bin(cromosomas2[i])[3:]))
 			else:
 				bin1+=bin(cromosomas1[i])[2:] 
 				bin2+=bin(cromosomas2[i])[2:]
+				self.cromosomas1Len.append(len(bin(cromosomas1[i])[2:]))
+				self.cromosomas2Len.append(len(bin(cromosomas2[i])[2:]))
 			
 		return [bin1,bin2]
 
 	def swapBits(self,bin1,bin2):
 		rand = r.randint(0,len(bin1))
-		print(rand)
-		print(bin1," ",bin2)
 		aux1 = bin1[:rand]
 		aux2 = bin2[:rand]
 
@@ -45,20 +50,31 @@ class fractalTree:
 
 		aux1+=mitad2
 		aux2+=mitad1
-		print(aux1," ",aux2)
-		return [aux1,aux2]
+		return [aux2,aux1]
 
 
 	def Cruces(self):
 		parejas = self.Seleccion()
 
 		for pair in parejas:
-			print(pair)
-			cromosomas1 = self.topArboles[pair[0]]['Parametros']
-			cromosomas2 = self.topArboles[pair[1]]['Parametros']
+			parametros1 = self.topArboles[pair[0]]['Parametros']
+			parametros2 = self.topArboles[pair[1]]['Parametros']
 
-			binarios = self.convertirParamABin(cromosomas1,cromosomas2)
+			binarios = self.convertirParamABin(parametros1,parametros2)
 			binarios = self.swapBits(binarios[0],binarios[1])
+			
+			newCromosomas1 = []
+			newCromosomas2 = []
+			act1=0
+			act2=0
+			for i in range(len(self.cromosomas1Len)):
+				rango1 = self.cromosomas1Len[i]
+				rango2 = self.cromosomas2Len[i]
+				newCromosomas1.append(int(binarios[0][act1:act1+rango1],2))
+				newCromosomas2.append(int(binarios[1][act2:act2+rango2],2))
+				act1+=rango1
+				act2+=rango2
+
 
 	def Seleccion(self):
 		notas = []

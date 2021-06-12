@@ -12,7 +12,7 @@ class App(tk.Tk):
 		self.title("Algoritmos genéticos")
 		self.resizable(0, 0)		
 		self.imagePath = "" 	#path de la imagen que se subirá
-
+	
 		self.geneticApp = fractalTree()  # Clase con el arbol fractal
 		self.container = tk.Frame(self)
 		self.container.pack(side="top", fill="both", expand=True)

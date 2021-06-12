@@ -22,7 +22,18 @@ class fractalTree:
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
 
-
+	def remplazarTop(self,pDict,pId):
+		id =0
+		notaAct = 10000
+		for dict in self.topArboles:
+			if(self.topArboles[dict]['Nota']<notaAct):
+				id = dict
+				notaAct = self.topArboles[dict]['Nota']
+		
+		if(pDict['Nota']>self.topArboles[id]['Nota']):
+			print(id)
+			del self.topArboles[id]
+			self.topArboles[pId] = pDict
 
 	def convertirParamABin(self,cromosomas1,cromosomas2):
 		bin1 = ""
@@ -72,8 +83,14 @@ class fractalTree:
 			for i in range(len(self.cromosomas1Len)):
 				rango1 = self.cromosomas1Len[i]
 				rango2 = self.cromosomas2Len[i]
-				newCromosomas1.append(int(binarios[0][act1:act1+rango1],2))
-				newCromosomas2.append(int(binarios[1][act2:act2+rango2],2))
+				if(binarios[0][act1:act1+rango1]!=''):
+					newCromosomas1.append(int(binarios[0][act1:act1+rango1],2))
+				else:
+					newCromosomas1.append(0)
+				if(binarios[1][act2:act2+rango2]!=''):
+					newCromosomas2.append(int(binarios[1][act2:act2+rango2],2))
+				else:
+					newCromosomas2.append(0)
 				act1+=rango1
 				act2+=rango2
 			
@@ -83,16 +100,18 @@ class fractalTree:
 			self.FractalCoords = []
 			nota1 = self.getScore(self.SilhouetteMatrix,newCoord1)
 			arbolDict1 = {'Coordenadas': newCoord1, 'Parametros':newCromosomas1, 'Nota': nota1, 'Padres' : pair}
-			self.FractalDict[len(self.FractalDict)-1] = arbolDict1
-
+			self.FractalDict[len(self.FractalDict)] = arbolDict1
+			self.remplazarTop(arbolDict1,len(self.FractalDict)-1)
 			# Arbol nuevo #2
 			newCoord2 = self.drawTree(300,599,newCromosomas2[0],newCromosomas2[1],newCromosomas2[2],
 				newCromosomas2[3],newCromosomas2[4],newCromosomas2[5],newCromosomas2[6])
 			self.FractalCoords = []
 			nota2 = self.getScore(self.SilhouetteMatrix,newCoord2)
 			arbolDict2 = {'Coordenadas': newCoord2, 'Parametros':newCromosomas2, 'Nota': nota2, 'Padres' : pair}
-			self.FractalDict[len(self.FractalDict)-1] = arbolDict2
+			self.FractalDict[len(self.FractalDict)] = arbolDict2
+			self.remplazarTop(arbolDict2,len(self.FractalDict)-1)
 
+			print(self.topArboles)
 
 	def Seleccion(self):
 		notas = []
@@ -143,7 +162,7 @@ class fractalTree:
 		return self.FractalCoords
 
 	def PoblacionInicial(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		for i in range(2):
+		for i in range(10):
 			rAngle = r.randint(80,angle*-1)*-1
 			rforkAng = r.randint(0,forkAng)
 			rDepth = r.randint(4,depth)

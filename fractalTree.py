@@ -22,6 +22,8 @@ class fractalTree:
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
 
+
+
 	def convertirParamABin(self,cromosomas1,cromosomas2):
 		bin1 = ""
 		bin2 = ""
@@ -55,14 +57,14 @@ class fractalTree:
 
 	def Cruces(self):
 		parejas = self.Seleccion()
-
+		
 		for pair in parejas:
 			parametros1 = self.topArboles[pair[0]]['Parametros']
 			parametros2 = self.topArboles[pair[1]]['Parametros']
 
 			binarios = self.convertirParamABin(parametros1,parametros2)
 			binarios = self.swapBits(binarios[0],binarios[1])
-			
+
 			newCromosomas1 = []
 			newCromosomas2 = []
 			act1=0
@@ -74,6 +76,22 @@ class fractalTree:
 				newCromosomas2.append(int(binarios[1][act2:act2+rango2],2))
 				act1+=rango1
 				act2+=rango2
+			
+			# Arbol nuevo #1
+			newCoord1 = self.drawTree(300,599,newCromosomas1[0],newCromosomas1[1],newCromosomas1[2],
+				newCromosomas1[3],newCromosomas1[4],newCromosomas1[5],newCromosomas1[6])
+			self.FractalCoords = []
+			nota1 = self.getScore(self.SilhouetteMatrix,newCoord1)
+			arbolDict1 = {'Coordenadas': newCoord1, 'Parametros':newCromosomas1, 'Nota': nota1, 'Padres' : pair}
+			self.FractalDict[len(self.FractalDict)-1] = arbolDict1
+
+			# Arbol nuevo #2
+			newCoord2 = self.drawTree(300,599,newCromosomas2[0],newCromosomas2[1],newCromosomas2[2],
+				newCromosomas2[3],newCromosomas2[4],newCromosomas2[5],newCromosomas2[6])
+			self.FractalCoords = []
+			nota2 = self.getScore(self.SilhouetteMatrix,newCoord2)
+			arbolDict2 = {'Coordenadas': newCoord2, 'Parametros':newCromosomas2, 'Nota': nota2, 'Padres' : pair}
+			self.FractalDict[len(self.FractalDict)-1] = arbolDict2
 
 
 	def Seleccion(self):

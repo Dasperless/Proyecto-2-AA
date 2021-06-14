@@ -167,7 +167,7 @@ class fractalTree:
 		if event.type == pygame.QUIT:
 			quit()
 
-f = fractalTree()
-m = f.getDataFromSilhouette("silueta.gif")
-f.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
+# f = fractalTree()
+# m = f.getDataFromSilhouette("silueta.gif")
+# f.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
 

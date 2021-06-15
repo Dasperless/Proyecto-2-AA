@@ -36,7 +36,8 @@ class fractalTree:
 
 	def remplazarTop(self,pDict,pId):
 		id =0
-		notaAct = 10000
+		notaAct = 9999999
+
 		for dict in self.topArboles:
 			if(self.topArboles[dict]['Nota']<notaAct):
 				id = dict
@@ -89,6 +90,8 @@ class fractalTree:
 		parejas = self.Seleccion()
 		
 		for pair in parejas:
+			self.cromosomas1Len=[]
+			self.cromosomas2Len=[]
 			parametros1 = self.FractalDict[pair[0]]['Parametros']
 			parametros2 = self.FractalDict[pair[1]]['Parametros']
 
@@ -178,6 +181,7 @@ class fractalTree:
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
+			
 		return self.FractalCoords
 
 	def PoblacionInicial(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec, rateMut):
@@ -195,8 +199,8 @@ class fractalTree:
 			nota = self.getScore(self.SilhouetteMatrix,coordenadas)
 			arbolDict = {'Coordenadas': coordenadas, 'Parametros':parametros, 'Nota': nota, 'Padres' : None}
 			self.FractalDict[i] = arbolDict
+			self.topArboles[i] = {'Nota': nota}
 			self.FractalCoords = []
-		self.topArboles = self.FractalDict
 		self.Cruces()
 
 	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
@@ -213,5 +217,5 @@ class fractalTree:
 
 f = fractalTree()
 m = f.getDataFromSilhouette("silueta.gif")
-f.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1,4)
+f.PoblacionInicial(300, 599, -90, 30, 5, 12, 1, 10, 0,4)
 

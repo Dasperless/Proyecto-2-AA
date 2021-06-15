@@ -35,10 +35,13 @@ class fractalTree:
 
 
 	def remplazarTop(self,pDict,pId):
+		
 		id =0
 		notaAct = 9999999
 
 		for dict in self.topArboles:
+			if(pDict == self.topArboles[dict]):
+				return
 			if(self.topArboles[dict]['Nota']<notaAct):
 				id = dict
 				notaAct = self.topArboles[dict]['Nota']
@@ -125,7 +128,7 @@ class fractalTree:
 			nota1 = self.getScore(self.SilhouetteMatrix,newCoord1)
 			arbolDict1 = {'Coordenadas': newCoord1, 'Parametros':newCromosomas1, 'Nota': nota1, 'Padres' : pair}
 			self.FractalDict[len(self.FractalDict)] = arbolDict1
-			self.remplazarTop(arbolDict1,len(self.FractalDict)-1)
+			self.remplazarTop({'Nota': nota1},len(self.FractalDict)-1)
 			# Arbol nuevo #2
 			newCoord2 = self.drawTree(300,599,newCromosomas2[0],newCromosomas2[1],newCromosomas2[2],
 				newCromosomas2[3],newCromosomas2[4],newCromosomas2[5],newCromosomas2[6])
@@ -133,8 +136,15 @@ class fractalTree:
 			nota2 = self.getScore(self.SilhouetteMatrix,newCoord2)
 			arbolDict2 = {'Coordenadas': newCoord2, 'Parametros':newCromosomas2, 'Nota': nota2, 'Padres' : pair}
 			self.FractalDict[len(self.FractalDict)] = arbolDict2
-			self.remplazarTop(arbolDict2,len(self.FractalDict)-1)
+			self.remplazarTop({'Nota': nota2},len(self.FractalDict)-1)
 			
+		notatotal = 0
+		for dict in self.topArboles:
+			notatotal += self.topArboles[dict]['Nota']
+		notatotal = notatotal/(len(self.topArboles)*100)
+		if(notatotal < 80):
+			self.Cruces()
+
 	def Seleccion(self):
 		notas = []
 		arboles = []
@@ -172,6 +182,8 @@ class fractalTree:
 		elif(diamDec >= baseDiam):
 			diamDec = 0
 		if depth > 0:
+			if(depth>10):
+				depth = 10
 			x2 = x1 + int(math.cos(math.radians(angle)) * depth * baseLen)
 			y2 = y1 + int(math.sin(math.radians(angle)) * depth * baseLen)
 			if(self.screen != None):
@@ -180,7 +192,7 @@ class fractalTree:
 			self.drawTree(x2, y2, angle - forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			self.drawTree(x2, y2, angle, forkAng, depth - 1, baseLen -
-						  lenDec, lenDec, baseDiam-diamDec, diamDec)
+			 			  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			

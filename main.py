@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.filedialog as fd
 from tkinter import Listbox, StringVar, font as tkfont
 
-from numpy import right_shift
+from numpy import right_shift, string_
 from fractalTree import fractalTree
 import tkinter.messagebox as mb
 
@@ -24,7 +24,7 @@ class App(tk.Tk):
 
 		self.frames = {}
 		self.pages = []
-		for F, geometry in zip((DashboardPage, UploadPage), ('825x400', '825x605')):
+		for F, geometry in zip((DashboardPage, UploadPage), ('735x300', '825x605')):
 			page_name = F.__name__
 			frame = F(parent=self.container, controller=self)
 			self.pages.append(frame)
@@ -50,7 +50,7 @@ class DashboardPage(tk.Frame):
 		# Scroll
 		labelScrollListBox = tk.LabelFrame(self, text="Árboles")
 		labelScrollListBox.grid(row=0, column=0, sticky="ENS", rowspan=45)
-		self.listbox = tk.Listbox(labelScrollListBox, height=43, width=40)
+		self.listbox = tk.Listbox(labelScrollListBox, width=40)
 		self.listbox.pack(side="left", fill="both")
 
 		scrollbar = tk.Scrollbar(labelScrollListBox)
@@ -120,11 +120,11 @@ class DashboardPage(tk.Frame):
 		if selection:
 			#Indices
 			index = selection[0]
-			PIndex = self.treeList[index]["Padres"]
-			treeParams = self.treeList[index]["Parametros"]
-			treeScore = self.treeList[index]["Nota"]
+			treeDic = self.treeList[index]
+			PIndex = treeDic["Padres"]
+			treeParams = treeDic["Parametros"]
 			strChrm = self.formatChromosomes(treeParams)
-
+			strInfo = self.formatInfo(treeDic)
 
 			self.updateCommand(self.ShowTree,treeParams)
 			if(PIndex != None ):
@@ -143,7 +143,23 @@ class DashboardPage(tk.Frame):
 			self.ChromosomeStr.set(strChrm)
 			self.Parent1ChromoStr.set(strChrmP1)
 			self.Parent2ChromoStr.set(strChrmP2)
-			self.InfoStr.set("Nota:" + str(treeScore))
+			self.InfoStr.set(strInfo)
+
+	def formatInfo(self, treeDic):
+		strFormated= ""
+		labels = ["Notas:","Padre 1:","Padre 2:"]
+		info = ["Nota", "Padres", "Padres"]
+		max_len = max(len(l) for l in labels)
+		for i in range(len(labels)):
+			string = '{}'
+			if(i >0 and treeDic[info[i]] != None):
+				strFormated+= string.format(labels[i].ljust(max_len+1)+str(treeDic[info[i]][i-1]))+"\n"
+			elif(treeDic[info[i]] == None): 
+				strFormated+= string.format(labels[i].ljust(max_len+1)+"Primera generacíon"+"\n")
+			else:
+				strFormated+= string.format(labels[i].ljust(max_len+1)+str(treeDic[info[i]]))+"\n"
+
+		return strFormated
 
 
 	def updateCommand(self, button, params):

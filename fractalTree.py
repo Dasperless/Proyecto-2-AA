@@ -141,12 +141,8 @@ class fractalTree:
 			self.FractalDict[len(self.FractalDict)] = arbolDict2
 			self.remplazarTop({'Nota': nota2},len(self.FractalDict)-1)
 			
-		notatotal = 0
-		for dict in self.topArboles:
-			notatotal += self.topArboles[dict]['Nota']
-		notatotal = notatotal/(len(self.topArboles)*100)
-		if(notatotal < 80):
-			self.Cruces()
+		if(len(self.FractalDict)<20):
+					self.Cruces()
 
 	def Seleccion(self):
 		notas = []
@@ -248,6 +244,6 @@ class fractalTree:
 					pygame.quit()
 					running = False
 
-f = fractalTree()
-m = f.getDataFromSilhouette("silueta.gif")
-f.PoblacionInicial(300,599,-85,8,6,16,1,14,5,4)
+# f = fractalTree()
+# m = f.getDataFromSilhouette("silueta.gif")
+# f.PoblacionInicial(300,599,-85,8,6,16,1,14,5,4)

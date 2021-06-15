@@ -17,9 +17,12 @@ class fractalTree:
 		self.screen = None
 		self.rateMutation = None
 
-	def windowSettings(self):
+	def windowSettings(self,show):
+		flag = pygame.HIDDEN
+		if(show):
+			flag = 0
 		pygame.init()
-		self.window = pygame.display.set_mode((600, 600))
+		self.window = pygame.display.set_mode((600, 600), flags = flag)
 		pygame.display.set_caption("Fractal Tree")
 		self.screen = pygame.display.get_surface()
 
@@ -151,11 +154,13 @@ class fractalTree:
 
 	def getScore(self, silhouetteArr, fractalArr):
 		a = set(map(tuple,silhouetteArr))
-		b = set(map(tuple,fractalArr))
-		score = len(a.intersection(b))
+		score = 0
+		for i in silhouetteArr:
+			if(self.screen.get_at((i[0],i[1])) == (255,255,255,255)):
+				score+=1
 		if(score == 0):
 			score = 1
-		return score/len(fractalArr)*100
+		return score/len(silhouetteArr)*100
 
 	def getDataFromSilhouette(self, path):
 		img = Image.open(path)
@@ -180,8 +185,6 @@ class fractalTree:
 
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		if([x1,y1] not in self.FractalCoords and self.screen == None):
-			self.FractalCoords.append([x1, y1])
 		if(lenDec >= baseLen):
 			lenDec = 0
 		elif(diamDec >= baseDiam):
@@ -189,8 +192,7 @@ class fractalTree:
 		if depth > 0:
 			x2 = x1 + int(math.cos(math.radians(angle)) * depth * baseLen)
 			y2 = y1 + int(math.sin(math.radians(angle)) * depth * baseLen)
-			if(self.screen != None):
-				pygame.draw.line(self.screen, (255, 255, 255),
+			pygame.draw.line(self.screen, (255, 255, 255),
 								 (x1, y1), (x2, y2), baseDiam)
 			self.drawTree(x2, y2, angle - forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
@@ -199,10 +201,9 @@ class fractalTree:
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			
-		return self.FractalCoords
-
 	def PoblacionInicial(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec, rateMut):
 		self.rateMutation = rateMut	
+		self.windowSettings(False)
 		for i in range(10):
 			rAngle = r.randint(80,angle*-1)*-1
 			rforkAng = r.randint(0,forkAng)
@@ -212,8 +213,10 @@ class fractalTree:
 			rBaseDiam = r.randint(1,baseDiam)
 			rDiamDec = r.randint(0,diamDec)
 			parametros  = [rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec]
-			coordenadas = self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec)
-			nota = self.getScore(self.SilhouetteMatrix,coordenadas)
+			self.drawTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec)
+			pygame.display.flip()
+			coordenadas = []
+			nota = self.getScore(self.SilhouetteMatrix,self.screen)
 			arbolDict = {'Coordenadas': coordenadas, 'Parametros':parametros, 'Nota': nota, 'Padres' : None}
 			self.FractalDict[i] = arbolDict
 			self.topArboles[i] = {'Nota': nota}
@@ -222,7 +225,7 @@ class fractalTree:
 		self.Cruces()
 
 	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
-		self.windowSettings()
+		self.windowSettings(True)
 		self.drawTree(x1, y1, angle, forkAngle, depth,
 					  baseLen, lenDec, baseDiam, diamDec)
 		pygame.display.flip()
@@ -233,3 +236,6 @@ class fractalTree:
 					pygame.quit()
 					running = False
 
+f = fractalTree()
+m = f.getDataFromSilhouette("silueta.gif")
+f.PoblacionInicial(300,599,-85,8,6,16,1,14,5,4)

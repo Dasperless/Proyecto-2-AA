@@ -31,7 +31,6 @@ class fractalTree:
 				notaAct = self.topArboles[dict]['Nota']
 		
 		if(pDict['Nota']>self.topArboles[id]['Nota']):
-			print(id)
 			del self.topArboles[id]
 			self.topArboles[pId] = pDict
 
@@ -111,8 +110,6 @@ class fractalTree:
 			self.FractalDict[len(self.FractalDict)] = arbolDict2
 			self.remplazarTop(arbolDict2,len(self.FractalDict)-1)
 
-			print(self.topArboles)
-
 	def Seleccion(self):
 		notas = []
 		arboles = []
@@ -131,7 +128,9 @@ class fractalTree:
 		a = set(map(tuple,silhouetteArr))
 		b = set(map(tuple,fractalArr))
 		score = len(a.intersection(b))
-		return score/len(silhouetteArr)*100
+		if(score == 0):
+			score = 1
+		return score/len(fractalArr)*100
 
 	def getDataFromSilhouette(self, path):
 		img = Image.open(path)
@@ -156,7 +155,7 @@ class fractalTree:
 
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):
-		if([x1,y1] not in self.FractalCoords):
+		if([x1,y1] not in self.FractalCoords and self.screen == None):
 			self.FractalCoords.append([x1, y1])
 		if(lenDec >= baseLen):
 			lenDec = 0
@@ -197,14 +196,10 @@ class fractalTree:
 		self.drawTree(x1, y1, angle, forkAngle, depth,
 					  baseLen, lenDec, baseDiam, diamDec)
 		pygame.display.flip()
-		while True:
-			self.input(pygame.event.wait())
-
-	def input(self, event):
-		if event.type == pygame.QUIT:
-			quit()
-
-# f = fractalTree()
-# m = f.getDataFromSilhouette("silueta.gif")
-# f.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
+		running = True
+		while running:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					running = False
 

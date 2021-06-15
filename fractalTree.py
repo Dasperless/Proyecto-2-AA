@@ -141,7 +141,7 @@ class fractalTree:
 			self.FractalDict[len(self.FractalDict)] = arbolDict2
 			self.remplazarTop({'Nota': nota2},len(self.FractalDict)-1)
 			
-		if(len(self.FractalDict)<20):
+		if(len(self.FractalDict)<100):
 					self.Cruces()
 
 	def Seleccion(self):

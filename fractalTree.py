@@ -173,7 +173,7 @@ class fractalTree:
 
 	def algoritmoGenetico(self, imagePath):
 		self.getDataFromSilhouette(imagePath)
-		self.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1)
+		self.PoblacionInicial(300, 599, -90, 13, 15, 9, 1, 6, 1,4)
 
 
 	def drawTree(self, x1, y1, angle, forkAng, depth, baseLen, lenDec, baseDiam, diamDec):

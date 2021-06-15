@@ -26,7 +26,7 @@ class fractalTree:
 	def mutacion(self, pBits):
 		lista = list(pBits)
 		for i in range(self.rateMutation):
-			index  = r.randint(0,len(lista))
+			index  = r.randint(0,len(lista)-1)
 			if(lista[index]=='1'):
 				lista[index]='0'
 			else:
@@ -134,7 +134,7 @@ class fractalTree:
 			arbolDict2 = {'Coordenadas': newCoord2, 'Parametros':newCromosomas2, 'Nota': nota2, 'Padres' : pair}
 			self.FractalDict[len(self.FractalDict)] = arbolDict2
 			self.remplazarTop(arbolDict2,len(self.FractalDict)-1)
-
+			
 	def Seleccion(self):
 		notas = []
 		arboles = []
@@ -143,7 +143,7 @@ class fractalTree:
 		for arbol in self.topArboles:
 			arboles.append(arbol)
 			notas.append(self.topArboles[arbol]['Nota'])
-		seleccionados = r.choices(arboles,cum_weights= notas,k=len(self.topArboles))
+		seleccionados = np.random.choice(arboles , len(self.topArboles), notas)
 		
 		for i in range(0,len(seleccionados),2):	
 			parejas.append([seleccionados[i],seleccionados[i+1]])
@@ -194,6 +194,8 @@ class fractalTree:
 								 (x1, y1), (x2, y2), baseDiam)
 			self.drawTree(x2, y2, angle - forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
+			self.drawTree(x2, y2, angle, forkAng, depth - 1, baseLen -
+						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			self.drawTree(x2, y2, angle + forkAng, forkAng, depth - 1, baseLen -
 						  lenDec, lenDec, baseDiam-diamDec, diamDec)
 			
@@ -216,6 +218,7 @@ class fractalTree:
 			self.FractalDict[i] = arbolDict
 			self.topArboles[i] = {'Nota': nota}
 			self.FractalCoords = []
+			#self.showTree(x1, y1, rAngle, rforkAng, rDepth, rBaseLen, rLenDec, rBaseDiam, rDiamDec)
 		self.Cruces()
 
 	def showTree(self, x1, y1, angle, forkAngle, depth, baseLen, lenDec, baseDiam, diamDec):
